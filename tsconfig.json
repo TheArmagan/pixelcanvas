@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "module": "esnext",
+    "target": "esnext",
+    "jsx": "preserve",
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "node"
+  },
+  "exclude": [
+    "node_modules",
+    "**/node_modules/*"
+  ]
+}
