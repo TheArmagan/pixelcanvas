@@ -18,7 +18,20 @@ export class WorldManager {
     }, 5*1000*60)
   }
 
-  async getWorld(name: string): Promise<World> {
-    return null as any;
+  getWorld(name: string): World {
+    name = clearName(name);
+    let cached = this.worldCache.get(name);
+    if (cached) {
+      cached.lastUpdate = Date.now();
+      return cached;
+    }
+
+    let world = new World(this, name);
+    this.worldCache.set(name, { ...world, lastUpdate: Date.now() } as any);
+    return world;
   }
+}
+
+export function clearName(name: string): string {
+  return name.toLowerCase().replace(/[^A-Za-z0-9_-]/gm, "").slice(0, 128);
 }

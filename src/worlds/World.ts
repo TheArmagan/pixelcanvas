@@ -1,18 +1,19 @@
 import { Collection } from "mongodb";
 import { PixelCanvas } from "../PixelCanvas";
 import { Chunk } from "./Chunk";
+import { clearName, WorldManager } from "./WorldManager";
 
 export class World {
-  pc: PixelCanvas;
+  wm: WorldManager;
   name: string;
   chunkColl: Collection;
   infoColl: Collection;
   chunksCache = new Map<string, Chunk & {lastUpdate:number}>();
-  constructor(pc: PixelCanvas, name: string) {
-    this.pc = pc;
-    this.name = name.toLowerCase().replace(/[^A-Za-z0-9_-]/gm,"").slice(0, 128);
-    this.chunkColl = this.pc.db.collection(`worldChunks_${this.name}`);
-    this.infoColl = this.pc.db.collection(`worldInfo_${this.name}`);
+  constructor(wm: WorldManager, name: string) {
+    this.wm = wm;
+    this.name = clearName(name);
+    this.chunkColl = this.wm.pc.db.collection(`worldChunks_${this.name}`);
+    this.infoColl = this.wm.pc.db.collection(`worldInfo_${this.name}`);
 
     setInterval(() => {
       this.chunksCache.forEach((chunk, xy) => {
@@ -38,7 +39,7 @@ export class World {
     }
     
     let chunk = new Chunk(this, chunkData);
-    this.chunksCache.set(xy, {lastUpdate: Date.now(), ...chunk} as any)
+    this.chunksCache.set(xy, {...chunk, lastUpdate: Date.now()} as any)
     return chunk;
   }
 
